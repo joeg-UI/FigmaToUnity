@@ -112,6 +112,13 @@ namespace FigmaSync.Editor.Generation
 
         private void BuildVisuals(GameObject go, SyncNode node)
         {
+            // TEXT nodes should ALWAYS be labels, regardless of detected type
+            if (node.FigmaType == "TEXT")
+            {
+                BuildLabel(go, node);
+                return;
+            }
+
             // Handle based on type
             switch (node.Type)
             {
