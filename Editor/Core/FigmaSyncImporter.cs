@@ -138,6 +138,9 @@ namespace FigmaSync.Editor.Core
         {
             var pages = new List<PageInfo>();
 
+            Debug.Log($"[FigmaSync] FetchPages - Token length: {_settings.PersonalAccessToken?.Length ?? 0}");
+            Debug.Log($"[FigmaSync] FetchPages - FileKey: {_settings.FileKey}");
+
             if (string.IsNullOrEmpty(_settings.PersonalAccessToken))
             {
                 OnError?.Invoke("Personal Access Token is required");
@@ -155,10 +158,16 @@ namespace FigmaSync.Editor.Core
                 _apiClient = new FigmaApiClient(_settings.PersonalAccessToken);
 
                 ReportProgress("Fetching page information...", 0.5f);
+                Debug.Log("[FigmaSync] Calling Figma API...");
+
                 var response = await _apiClient.GetFileAsync(_settings.FileKey, cancellationToken);
+
+                Debug.Log($"[FigmaSync] API Response received. Document null? {response?.document == null}");
 
                 if (response?.document?.children != null)
                 {
+                    Debug.Log($"[FigmaSync] Found {response.document.children.Count} top-level nodes");
+
                     foreach (var page in response.document.children)
                     {
                         if (page.type == "CANVAS")
@@ -171,14 +180,21 @@ namespace FigmaSync.Editor.Core
                                 ComponentCount = componentCount,
                                 SuggestedLevel = _settings.GetAtomicLevelForPage(page.name)
                             });
+                            Debug.Log($"[FigmaSync] Found page: {page.name} ({componentCount} components)");
                         }
                     }
+                }
+                else
+                {
+                    Debug.LogWarning("[FigmaSync] Response document or children is null");
+                    OnError?.Invoke("No pages found in Figma document");
                 }
 
                 ReportProgress("Pages loaded", 1.0f);
             }
             catch (Exception ex)
             {
+                Debug.LogError($"[FigmaSync] FetchPages error: {ex}");
                 OnError?.Invoke($"Failed to fetch pages: {ex.Message}");
             }
 

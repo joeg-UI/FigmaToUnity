@@ -515,11 +515,8 @@ namespace FigmaSync.Editor.UI
 
         private void DrawFooter()
         {
-            // Progress bar
-            if (_progressDisplay.IsRunning)
-            {
-                _progressDisplay.Draw();
-            }
+            // Progress bar and errors
+            _progressDisplay.Draw();
 
             EditorGUILayout.Space(5);
 

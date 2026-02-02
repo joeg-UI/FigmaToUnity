@@ -71,7 +71,7 @@ namespace FigmaSync.Editor.UI
         /// </summary>
         public void Draw()
         {
-            // Show error if present
+            // Show error if present (always, even when not running)
             if (_showError && !string.IsNullOrEmpty(_errorMessage))
             {
                 EditorGUILayout.HelpBox(_errorMessage, MessageType.Error);
@@ -85,17 +85,21 @@ namespace FigmaSync.Editor.UI
                 EditorGUILayout.Space(10);
             }
 
-            // Status text
-            if (!string.IsNullOrEmpty(_currentStatus))
+            // Only show progress when running
+            if (_isRunning)
             {
-                EditorGUILayout.LabelField(_currentStatus, EditorStyles.miniLabel);
+                // Status text
+                if (!string.IsNullOrEmpty(_currentStatus))
+                {
+                    EditorGUILayout.LabelField(_currentStatus, EditorStyles.miniLabel);
+                }
+
+                // Progress bar
+                var rect = EditorGUILayout.GetControlRect(false, 20);
+                EditorGUI.ProgressBar(rect, _progress, $"{(_progress * 100):F0}%");
+
+                EditorGUILayout.Space(5);
             }
-
-            // Progress bar
-            var rect = EditorGUILayout.GetControlRect(false, 20);
-            EditorGUI.ProgressBar(rect, _progress, $"{(_progress * 100):F0}%");
-
-            EditorGUILayout.Space(5);
         }
 
         /// <summary>
