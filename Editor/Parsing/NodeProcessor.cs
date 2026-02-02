@@ -241,6 +241,8 @@ namespace FigmaSync.Editor.Parsing
             syncFill.GradientStops = new System.Collections.Generic.List<SyncGradientStop>();
             foreach (var stop in fill.gradientStops)
             {
+                if (stop?.color == null) continue;
+
                 syncFill.GradientStops.Add(new SyncGradientStop
                 {
                     Position = stop.position,

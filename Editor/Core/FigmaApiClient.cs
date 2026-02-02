@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FigmaSync.Editor.Models;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -35,7 +36,7 @@ namespace FigmaSync.Editor.Core
             var url = $"{BaseUrl}/files/{fileKey}?geometry=paths";
             var json = await SendRequestAsync(url, cancellationToken);
 
-            return JsonUtility.FromJson<FigmaFileResponse>(json);
+            return JsonConvert.DeserializeObject<FigmaFileResponse>(json);
         }
 
         /// <summary>
@@ -50,7 +51,7 @@ namespace FigmaSync.Editor.Core
             var url = $"{BaseUrl}/files/{fileKey}/nodes?ids={Uri.EscapeDataString(ids)}&geometry=paths";
             var json = await SendRequestAsync(url, cancellationToken);
 
-            return JsonUtility.FromJson<FigmaFileResponse>(json);
+            return JsonConvert.DeserializeObject<FigmaFileResponse>(json);
         }
 
         /// <summary>
@@ -70,7 +71,7 @@ namespace FigmaSync.Editor.Core
             var url = $"{BaseUrl}/images/{fileKey}?ids={Uri.EscapeDataString(ids)}&format={format}&scale={scale}";
             var json = await SendRequestAsync(url, cancellationToken);
 
-            var response = JsonUtility.FromJson<FigmaImagesResponse>(json);
+            var response = JsonConvert.DeserializeObject<FigmaImagesResponse>(json);
 
             if (!string.IsNullOrEmpty(response.err))
             {
@@ -118,7 +119,7 @@ namespace FigmaSync.Editor.Core
             var url = $"{BaseUrl}/files/{fileKey}/images";
             var json = await SendRequestAsync(url, cancellationToken);
 
-            var response = JsonUtility.FromJson<ImageFillsResponse>(json);
+            var response = JsonConvert.DeserializeObject<ImageFillsResponse>(json);
 
             if (!string.IsNullOrEmpty(response.error))
             {
@@ -139,7 +140,7 @@ namespace FigmaSync.Editor.Core
             var url = $"{BaseUrl}/files/{fileKey}/components";
             var json = await SendRequestAsync(url, cancellationToken);
 
-            return JsonUtility.FromJson<FigmaComponentsResponse>(json);
+            return JsonConvert.DeserializeObject<FigmaComponentsResponse>(json);
         }
 
         /// <summary>
