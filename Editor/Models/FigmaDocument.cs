@@ -297,7 +297,16 @@ namespace FigmaSync.Editor.Models
         public string name;
         public string description;
         public string componentSetId;
-        public string documentationLinks;
+        public List<FigmaDocumentationLink> documentationLinks;
+    }
+
+    /// <summary>
+    /// Documentation link for components.
+    /// </summary>
+    [Serializable]
+    public class FigmaDocumentationLink
+    {
+        public string uri;
     }
 
     /// <summary>
