@@ -84,7 +84,7 @@ namespace FigmaSync.Editor.Layout
         {
             var layout = container.AddComponent<SpaceBetweenLayout>();
             layout.IsHorizontal = containerNode.LayoutMode == LayoutMode.Horizontal;
-            layout.Padding = new RectOffset(
+            layout.padding = new RectOffset(
                 containerNode.PaddingLeft,
                 containerNode.PaddingRight,
                 containerNode.PaddingTop,
