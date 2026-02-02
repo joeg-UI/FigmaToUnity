@@ -331,7 +331,7 @@ namespace FigmaSync.Editor.Models
     {
         public string type; // "BOOLEAN", "TEXT", "INSTANCE_SWAP", "VARIANT"
         public string value;
-        public string preferredValues;
+        public List<object> preferredValues; // Can be array of various types
     }
 
     /// <summary>
