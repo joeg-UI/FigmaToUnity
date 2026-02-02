@@ -52,12 +52,28 @@ namespace FigmaSync.Editor.Settings
         public string FontsFolder = "Assets/UI/Fonts";
 
         [Header("Asset Options")]
-        [Tooltip("Image scale for exported assets (1 = 1x, 2 = 2x, etc.)")]
+        [Tooltip("Import images at their original Figma size (1x)")]
+        public bool ImportAtOriginalSize = true;
+
+        [Tooltip("Image scale for exported assets when not using original size (1 = 1x, 2 = 2x, etc.)")]
         [Range(1, 4)]
         public int ImageScale = 2;
 
+        [Tooltip("Pixels per unit for imported sprites (100 = 1 Figma pixel = 1 Unity unit)")]
+        public float PixelsPerUnit = 100f;
+
         [Tooltip("Export format for images")]
         public ImageFormat ImageExportFormat = ImageFormat.PNG;
+
+        [Tooltip("Auto-detect and configure 9-slice sprites for scaleable elements")]
+        public bool AutoDetectSliceable = true;
+
+        [Tooltip("Keywords that indicate an asset should be sliceable (9-slice)")]
+        public List<string> SliceableKeywords = new List<string>
+        {
+            "button", "btn", "panel", "card", "background", "bg",
+            "container", "box", "frame", "border", "input", "field"
+        };
 
         [Header("Debug Options")]
         [Tooltip("Export raw Figma JSON for debugging")]

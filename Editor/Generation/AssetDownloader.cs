@@ -20,6 +20,7 @@ namespace FigmaSync.Editor.Generation
         private readonly FigmaApiClient _apiClient;
         private readonly FigmaSyncSettings _settings;
         private Dictionary<string, string> _downloadedAssets = new Dictionary<string, string>();
+        private Dictionary<string, SyncNode> _nodesByAssetPath = new Dictionary<string, SyncNode>();
 
         public AssetDownloader(FigmaApiClient apiClient, FigmaSyncSettings settings)
         {
@@ -73,11 +74,13 @@ namespace FigmaSync.Editor.Generation
                 try
                 {
                     var format = _settings.ImageExportFormat.ToString().ToLower();
+                    // Use scale 1 for original size, otherwise use configured scale
+                    var scale = _settings.ImportAtOriginalSize ? 1 : _settings.ImageScale;
                     nodeExportUrls = await _apiClient.GetImageUrlsAsync(
                         _settings.FileKey,
                         nodeIdsToExport,
                         format,
-                        _settings.ImageScale,
+                        scale,
                         cancellationToken
                     );
                 }
@@ -109,13 +112,20 @@ namespace FigmaSync.Editor.Generation
                     // Update nodes that use this hash
                     if (document.ImageHashes.TryGetValue(imageHash, out var nodeIds))
                     {
+                        SyncNode firstNode = null;
                         foreach (var nodeId in nodeIds)
                         {
                             var node = document.FindNodeById(nodeId);
                             if (node != null)
                             {
                                 node.ImageAssetPath = assetPath;
+                                if (firstNode == null) firstNode = node;
                             }
+                        }
+                        // Track first node for import settings
+                        if (firstNode != null)
+                        {
+                            _nodesByAssetPath[assetPath] = firstNode;
                         }
                     }
                 }
@@ -145,6 +155,7 @@ namespace FigmaSync.Editor.Generation
                 {
                     var assetPath = await DownloadImageAsync(url, node.CleanName, "Icons", cancellationToken);
                     _downloadedAssets[$"node:{nodeId}"] = assetPath;
+                    _nodesByAssetPath[assetPath] = node;
                     node.ImageAssetPath = assetPath;
                 }
                 catch (Exception ex)
@@ -206,14 +217,45 @@ namespace FigmaSync.Editor.Generation
                 importer.mipmapEnabled = false;
                 importer.filterMode = FilterMode.Bilinear;
                 importer.textureCompression = TextureImporterCompression.Uncompressed;
-                importer.maxTextureSize = 2048;
+                importer.maxTextureSize = 4096;
 
-                // For icons, set up 9-slice if appropriate
+                // Set pixels per unit from settings
+                importer.spritePixelsPerUnit = _settings.PixelsPerUnit;
+
+                // Check if this should be a sliceable (9-slice) sprite
                 var filename = Path.GetFileNameWithoutExtension(assetPath).ToLower();
-                if (filename.Contains("button") || filename.Contains("panel") || filename.Contains("card"))
+                bool isSliceable = false;
+
+                if (_settings.AutoDetectSliceable)
                 {
-                    // These might benefit from 9-slice
-                    // But we can't automatically determine the border
+                    foreach (var keyword in _settings.SliceableKeywords)
+                    {
+                        if (filename.Contains(keyword.ToLower()))
+                        {
+                            isSliceable = true;
+                            break;
+                        }
+                    }
+                }
+
+                // Get node dimensions for proper 9-slice borders
+                if (isSliceable && _nodesByAssetPath.TryGetValue(assetPath, out var node))
+                {
+                    // Calculate 9-slice borders based on node size
+                    // Use 25% of the smaller dimension as border, capped at 20 pixels
+                    var minDimension = Mathf.Min(node.Width, node.Height);
+                    var borderSize = Mathf.Min(minDimension * 0.25f, 20f);
+
+                    // Round to int for sprite border
+                    int border = Mathf.RoundToInt(borderSize);
+
+                    // Apply 9-slice border (left, bottom, right, top)
+                    var spritesheet = new TextureImporterSettings();
+                    importer.ReadTextureSettings(spritesheet);
+                    spritesheet.spriteBorder = new Vector4(border, border, border, border);
+                    importer.SetTextureSettings(spritesheet);
+
+                    Debug.Log($"[FigmaSync] Configured 9-slice for {filename} with border {border}px");
                 }
 
                 importer.SaveAndReimport();
