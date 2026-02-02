@@ -92,17 +92,25 @@ namespace FigmaSync.Editor.Settings
                 if (string.IsNullOrEmpty(FigmaFileUrl))
                     return null;
 
-                // URL format: https://www.figma.com/file/{fileKey}/...
-                // or https://www.figma.com/design/{fileKey}/...
-                var uri = new Uri(FigmaFileUrl);
-                var segments = uri.AbsolutePath.Split('/');
-
-                for (int i = 0; i < segments.Length - 1; i++)
+                try
                 {
-                    if (segments[i] == "file" || segments[i] == "design")
+                    // URL format: https://www.figma.com/file/{fileKey}/...
+                    // or https://www.figma.com/design/{fileKey}/...
+                    var uri = new Uri(FigmaFileUrl);
+                    var segments = uri.AbsolutePath.Split('/');
+
+                    for (int i = 0; i < segments.Length - 1; i++)
                     {
-                        return segments[i + 1];
+                        if (segments[i] == "file" || segments[i] == "design")
+                        {
+                            return segments[i + 1];
+                        }
                     }
+                }
+                catch (UriFormatException)
+                {
+                    // Invalid URL format
+                    return null;
                 }
 
                 return null;
