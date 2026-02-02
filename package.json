@@ -1,0 +1,27 @@
+{
+  "name": "com.joeg-ui.figmatounity",
+  "version": "1.0.0",
+  "displayName": "FigmaSync",
+  "description": "Import Figma designs into Unity with proper auto-layout, semantic type detection, and atomic design prefab support.",
+  "unity": "2021.3",
+  "unityRelease": "0f1",
+  "documentationUrl": "https://github.com/joeg-UI/FigmaToUnity#readme",
+  "changelogUrl": "https://github.com/joeg-UI/FigmaToUnity/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/joeg-UI/FigmaToUnity/blob/main/LICENSE",
+  "keywords": [
+    "figma",
+    "ui",
+    "import",
+    "design",
+    "layout",
+    "prefab"
+  ],
+  "author": {
+    "name": "joeg-UI",
+    "url": "https://github.com/joeg-UI"
+  },
+  "dependencies": {
+    "com.unity.textmeshpro": "3.0.6"
+  },
+  "samples": []
+}
