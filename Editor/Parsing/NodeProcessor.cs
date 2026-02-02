@@ -410,6 +410,12 @@ namespace FigmaSync.Editor.Parsing
 
             if (string.IsNullOrEmpty(clean)) return "Unnamed";
 
+            // Limit length to avoid Windows path length issues (max 50 chars for name)
+            if (clean.Length > 50)
+            {
+                clean = clean.Substring(0, 50).TrimEnd('_');
+            }
+
             return clean;
         }
 
