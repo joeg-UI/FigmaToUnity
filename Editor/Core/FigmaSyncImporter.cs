@@ -6,6 +6,7 @@ using FigmaSync.Editor.Generation;
 using FigmaSync.Editor.Models;
 using FigmaSync.Editor.Parsing;
 using FigmaSync.Editor.Settings;
+using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
 
@@ -72,7 +73,7 @@ namespace FigmaSync.Editor.Core
                 }
 
                 ReportProgress("Parsing Figma document...", 0.15f);
-                var figmaResponse = JsonUtility.FromJson<FigmaFileResponse>(rawJson);
+                var figmaResponse = JsonConvert.DeserializeObject<FigmaFileResponse>(rawJson);
 
                 if (figmaResponse?.document == null)
                 {
@@ -204,7 +205,7 @@ namespace FigmaSync.Editor.Core
                 var rawJson = FigmaJsonExporter.ImportRawJson(jsonFilePath);
 
                 ReportProgress("Parsing Figma document...", 0.20f);
-                var figmaResponse = JsonUtility.FromJson<FigmaFileResponse>(rawJson);
+                var figmaResponse = JsonConvert.DeserializeObject<FigmaFileResponse>(rawJson);
 
                 if (figmaResponse?.document == null)
                 {
