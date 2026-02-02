@@ -104,7 +104,7 @@ namespace FigmaSync.Editor.Core
                 // Step 4: Generate Unity assets
                 ReportProgress("Generating Unity prefabs...", 0.60f);
                 var generator = new UnityGenerator(_settings);
-                await generator.GenerateAsync(syncDocument, cancellationToken,
+                await generator.GenerateWithAssetsAsync(syncDocument, assetDownloader, cancellationToken,
                     (progress) => ReportProgress("Generating Unity prefabs...", 0.60f + progress * 0.35f));
 
                 // Complete
