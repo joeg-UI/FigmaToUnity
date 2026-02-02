@@ -223,7 +223,8 @@ namespace FigmaSync.Editor.Parsing
 
                 case "IMAGE":
                     syncFill.Type = FillType.Image;
-                    syncFill.ImageHash = fill.imageHash;
+                    // Use imageHash if available, fallback to imageRef
+                    syncFill.ImageHash = !string.IsNullOrEmpty(fill.imageHash) ? fill.imageHash : fill.imageRef;
                     syncFill.ImageScaleMode = fill.scaleMode;
                     break;
 

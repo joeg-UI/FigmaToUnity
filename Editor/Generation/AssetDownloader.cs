@@ -55,11 +55,15 @@ namespace FigmaSync.Editor.Generation
 
             // Get image fill URLs
             var imageFillUrls = new Dictionary<string, string>();
+            Debug.Log($"[FigmaSync] Found {document.ImageHashes.Count} unique image hashes to download");
+            Debug.Log($"[FigmaSync] Found {nodeIdsToExport.Count} vector nodes to export as images");
+
             if (document.ImageHashes.Count > 0)
             {
                 try
                 {
                     imageFillUrls = await _apiClient.GetImageFillsAsync(_settings.FileKey, cancellationToken);
+                    Debug.Log($"[FigmaSync] Got {imageFillUrls.Count} image fill URLs from Figma API");
                 }
                 catch (Exception ex)
                 {
