@@ -186,7 +186,7 @@ namespace FigmaSync.Editor.Models
         public FigmaColor color;
         public string blendMode;
         public List<FigmaColorStop> gradientStops;
-        public float[][] gradientHandlePositions; // For gradients
+        public List<FigmaVector> gradientHandlePositions; // For gradients
         public string scaleMode; // For images: "FILL", "FIT", "CROP", "TILE"
         public float imageRef; // Reference to image
         public string imageHash; // Hash for image lookup
